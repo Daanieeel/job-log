@@ -1,5 +1,7 @@
 # JobLog
 
+> A private work journal for iOS that summarizes your day, week, or month using on device AI
+
 A personal, fully offline, single-user work-logging app for iOS. Log short notes about what you
 just did at work, browse them by day in an archive, and get AI-curated summaries (Day / Week /
 Month / Quarter / Year) powered by on-device Apple Intelligence — with a graceful non-AI fallback
