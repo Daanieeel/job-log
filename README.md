@@ -1,73 +1,76 @@
-# Minimal Template
+# JobLog
 
-This is a [React Native](https://reactnative.dev/) project built with [Expo](https://expo.dev/) and [React Native Reusables](https://reactnativereusables.com).
+A personal, fully offline, single-user work-logging app for iOS. Log short notes about what you
+just did at work, browse them by day in an archive, and get AI-curated summaries (Day / Week /
+Month / Quarter / Year) powered by on-device Apple Intelligence — with a graceful non-AI fallback
+when it's unavailable.
 
-It was initialized using the following command, then the `Minimal (Nativewind)` template was selected when prompted:
+Everything lives in local SQLite. No backend, no accounts, no sync.
 
-```bash
-npx @react-native-reusables/cli@latest init
-```
+## ⚠️ Requires a custom dev client — will NOT run in Expo Go
 
-## Getting Started
-
-To run the development server:
-
-```bash
-    npm run dev
-    # or
-    yarn dev
-    # or
-    pnpm dev
-    # or
-    bun dev
-```
-
-This will start the Expo Dev Server. Open the app in:
-
-- **iOS**: press `i` to launch in the iOS simulator _(Mac only)_
-- **Android**: press `a` to launch in the Android emulator
-- **Web**: press `w` to run in a browser
-
-You can also scan the QR code using the [Expo Go](https://expo.dev/go) app on your device. This project fully supports running in Expo Go for quick testing on physical devices.
-
-## Adding components
-
-You can add more reusable components using the CLI:
+This app uses `@eitjuh/expo-apple-intelligence`, a native module, so **Expo Go cannot run it**.
+You need a dev-client build.
 
 ```bash
-npx react-native-reusables/cli@latest add [...components]
+bun install
+
+# One-time native project generation + CocoaPods install
+npx expo prebuild --platform ios
+cd ios && pod install && cd ..
+
+# Build and launch the dev client on a simulator or device
+npx expo run:ios
 ```
 
-> e.g. `npx react-native-reusables/cli@latest add input textarea`
+After the first `run:ios`, day-to-day development is just:
 
-If you don't specify any component names, you'll be prompted to select which components to add interactively. Use the `--all` flag to install all available components at once.
+```bash
+bun dev   # starts Metro; reload the already-installed dev client to connect
+```
 
-## Project Features
+Re-run `npx expo run:ios` whenever a native dependency changes (new `expo install`, new config
+plugin, etc.) — Metro alone won't pick up native changes.
 
-- ⚛️ Built with [Expo Router](https://expo.dev/router)
-- 🎨 Styled with [Tailwind CSS](https://tailwindcss.com/) via [Nativewind](https://www.nativewind.dev/)
-- 📦 UI powered by [React Native Reusables](https://github.com/founded-labs/react-native-reusables)
-- 🚀 New Architecture enabled
-- 🔥 Edge to Edge enabled
-- 📱 Runs on iOS, Android, and Web
+Apple Intelligence itself requires iOS 26+ on an iPhone 15 Pro or later (or an M-series iPad) with
+Apple Intelligence enabled in Settings — see `docs/adrs/ADR-002-apple-intelligence-requirements.md`.
+On anything else (including the simulator), the app automatically falls back to a basic,
+non-AI summary — this is expected, not a bug.
 
-## Learn More
+## Project structure
 
-To dive deeper into the technologies used:
+```
+app/                  Expo Router routes (tabs: Home, Archive, Summary, Settings)
+components/           Screen-level components + components/ui (react-native-reusables primitives)
+lib/
+  db/                 expo-sqlite client, migrations, entries + summaries repositories
+  ai/                 Apple Intelligence integration, basic fallback, cache-aware orchestrator
+  dates/              Period (day/week/month/quarter/year) boundary math + archive day list
+  i18n/               English/German translations, language resolution, locale-aware formatting
+  export/             JSON export (raw entries + cached summaries) for a selected period
+  theme/              Design tokens + ThemeProvider (system/light/dark)
+  stores/             Zustand stores (theme, app language, summary language, summary filter)
+docs/adrs/            Architecture decision records for assumptions made during the build
+DECISIONS.md          Other build-time decisions and deviations from the original spec
+```
 
-- [React Native Docs](https://reactnative.dev/docs/getting-started)
-- [Expo Docs](https://docs.expo.dev/)
-- [Nativewind Docs](https://www.nativewind.dev/)
-- [React Native Reusables](https://reactnativereusables.com)
+## Localization
 
-## Deploy with EAS
+The UI is available in English and German (`Settings → App language`, default: system locale).
+AI-generated summaries have their own independent language toggle on the Summary tab (default:
+German), so you can log in German and read summaries in either language. Basic (non-AI) fallback
+summaries can't be translated on-device and are shown in their original language — see
+`docs/adrs/ADR-003-localization.md`.
 
-The easiest way to deploy your app is with [Expo Application Services (EAS)](https://expo.dev/eas).
+## Exporting data
 
-- [EAS Build](https://docs.expo.dev/build/introduction/)
-- [EAS Updates](https://docs.expo.dev/eas-update/introduction/)
-- [EAS Submit](https://docs.expo.dev/submit/introduction/)
+- **Settings → Export as text** — every entry ever logged, as a plain-text share sheet.
+- **Summary tab → Export period as JSON** — the currently-selected period's raw entries plus any
+  already-generated summaries (in whichever languages have been generated), as a `.json` file via
+  the native share sheet. See `docs/adrs/ADR-004-json-export-scope.md` for exactly what's included.
 
----
+## Tech stack
 
-If you enjoy using React Native Reusables, please consider giving it a ⭐ on [GitHub](https://github.com/founded-labs/react-native-reusables). Your support means a lot!
+Expo SDK 56 (Router, dev-client), NativeWind + react-native-reusables, expo-sqlite, Zustand,
+date-fns, `@eitjuh/expo-apple-intelligence`, expo-symbols/blur/linear-gradient/haptics,
+`@expo-google-fonts/space-mono`.

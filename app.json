@@ -7,22 +7,15 @@
     "icon": "./assets/images/icon.png",
     "scheme": "job-log",
     "userInterfaceStyle": "automatic",
+    "platforms": [
+      "ios"
+    ],
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "supportsTablet": true,
+      "bundleIdentifier": "com.danieeel.job-log"
     },
     "plugins": [
       "expo-router",
@@ -34,7 +27,11 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-status-bar"
+      "expo-status-bar",
+      "expo-sqlite",
+      "expo-localization",
+      "expo-sharing",
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true

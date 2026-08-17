@@ -1,25 +1,30 @@
 import '@/global.css';
 
-import { NAV_THEME } from '@/lib/theme';
-import { ThemeProvider } from 'expo-router/react-navigation';
-import { PortalHost } from '@rn-primitives/portal';
+import { seedDevData } from '@/lib/db/seed';
+import { ThemeProvider } from '@/lib/theme/ThemeProvider';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { useColorScheme } from 'nativewind';
+import * as SplashScreen from 'expo-splash-screen';
+import { PortalHost } from '@rn-primitives/portal';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from 'expo-router';
 
-export default function RootLayout() {
-  const { colorScheme } = useColorScheme();
+SplashScreen.preventAutoHideAsync();
+seedDevData();
+SplashScreen.hideAsync();
 
+export default function RootLayout() {
   return (
-    <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
-      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <Stack />
-      <PortalHost />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" />
+        </Stack>
+        <PortalHost />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
