@@ -12,12 +12,12 @@ import { formatTimestamp } from '@/lib/i18n/format';
 import { useLanguageStore, type LanguagePreference } from '@/lib/stores/languageStore';
 import { useThemeStore, type ThemePreference } from '@/lib/stores/themeStore';
 import { cn } from '@/lib/utils';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import {
+  ChevronRightIcon,
   FileJsonIcon,
   FileUpIcon,
-  InfoIcon,
   MoonIcon,
   Share2Icon,
   SparklesIcon,
@@ -26,7 +26,7 @@ import {
   Trash2Icon,
 } from 'lucide-react-native';
 import * as React from 'react';
-import { ActivityIndicator, Alert, ScrollView, Share, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, Share, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const THEME_OPTIONS: ThemePreference[] = ['system', 'light', 'dark'];
@@ -46,45 +46,40 @@ function languageOptionLabel(
   return `${LANGUAGE_FLAG[option]} ${t(`settings.language.${option}`)}`;
 }
 
-function AIStatusCard({ availability }: { availability: AvailabilityStatus | null }) {
+function AIStatusRow({ availability }: { availability: AvailabilityStatus | null }) {
   const { t } = useTranslation();
+  const router = useRouter();
   const checking = !availability;
   const isAvailable = availability?.isAvailable ?? false;
 
   return (
-    <View
-      className={cn(
-        'flex-row items-center gap-4 rounded-2xl border p-4',
-        checking && 'border-border bg-card',
-        !checking && isAvailable && 'border-primary/30 bg-primary/10',
-        !checking && !isAvailable && 'border-amber/30 bg-amber/10'
-      )}>
-      <View
-        className={cn(
-          'h-11 w-11 items-center justify-center rounded-full',
-          checking && 'bg-muted',
-          !checking && isAvailable && 'bg-primary',
-          !checking && !isAvailable && 'bg-amber'
-        )}>
-        {checking ? (
-          <ActivityIndicator />
-        ) : (
-          <Icon as={isAvailable ? SparklesIcon : InfoIcon} className="text-white" size={20} />
-        )}
+    <Pressable
+      onPress={() => {
+        Haptics.selectionAsync();
+        router.push('/settings/on-device-ai');
+      }}
+      className="flex-row items-center gap-3 rounded-2xl border border-border bg-card p-3 active:bg-muted">
+      <View className="h-11 w-11 items-center justify-center rounded-2xl bg-primary">
+        <Icon as={SparklesIcon} className="text-primary-foreground" size={20} />
       </View>
       <View className="flex-1 gap-0.5">
-        <Text className="font-semibold">
-          {checking
-            ? t('settings.aiChecking')
-            : isAvailable
-              ? t('settings.aiAvailable')
-              : t('settings.aiUnavailable')}
-        </Text>
-        {availability && !isAvailable ? (
-          <Text className="text-sm text-muted-foreground">{availability.message}</Text>
-        ) : null}
+        <Text className="font-semibold">{t('settings.aiSectionTitle')}</Text>
+        <Text className="text-sm text-muted-foreground">{t('settings.aiSubtitle')}</Text>
       </View>
-    </View>
+      <View className="flex-row items-center gap-1.5">
+        {checking ? (
+          <ActivityIndicator size="small" />
+        ) : (
+          <>
+            <View className={cn('h-2 w-2 rounded-full', isAvailable ? 'bg-emerald-500' : 'bg-amber')} />
+            <Text className="text-sm text-muted-foreground">
+              {isAvailable ? t('settings.aiStatusAvailable') : t('settings.aiStatusUnavailable')}
+            </Text>
+          </>
+        )}
+        <Icon as={ChevronRightIcon} size={16} className="text-muted-foreground" />
+      </View>
+    </Pressable>
   );
 }
 
@@ -217,7 +212,7 @@ export default function SettingsScreen() {
 
       <View className="gap-3">
         <Eyebrow>{t('settings.aiSectionTitle')}</Eyebrow>
-        <AIStatusCard availability={availability} />
+        <AIStatusRow availability={availability} />
       </View>
 
       <View className="gap-3">

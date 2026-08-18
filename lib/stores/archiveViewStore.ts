@@ -7,6 +7,7 @@ export type ArchiveViewMode = 'compact' | 'extended';
 type ArchiveViewStore = {
   mode: ArchiveViewMode;
   toggle: () => void;
+  setMode: (mode: ArchiveViewMode) => void;
 };
 
 export const useArchiveViewStore = create<ArchiveViewStore>()(
@@ -14,6 +15,7 @@ export const useArchiveViewStore = create<ArchiveViewStore>()(
     (set, get) => ({
       mode: 'compact',
       toggle: () => set({ mode: get().mode === 'compact' ? 'extended' : 'compact' }),
+      setMode: (mode) => set({ mode }),
     }),
     {
       name: 'joblog.archive-view-mode',

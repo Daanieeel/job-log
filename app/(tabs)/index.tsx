@@ -6,7 +6,7 @@ import { GlowBackground } from '@/components/GlowBackground';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import { useTranslation } from '@/lib/i18n';
-import { createEntry, dayKeyFor, listByDay, type Entry } from '@/lib/db/entries';
+import { createEntry, dayKeyFor, deleteEntry, listByDay, type Entry } from '@/lib/db/entries';
 import { format } from 'date-fns';
 import { useFocusEffect } from 'expo-router';
 import * as React from 'react';
@@ -26,6 +26,11 @@ export default function HomeScreen() {
 
   function handleSubmit(text: string, at: Date) {
     createEntry(text, at);
+    refresh();
+  }
+
+  function handleDelete(id: string) {
+    deleteEntry(id);
     refresh();
   }
 
@@ -64,7 +69,7 @@ export default function HomeScreen() {
             </View>
           ) : null
         }
-        renderItem={({ item }) => <EntryListItem entry={item} />}
+        renderItem={({ item }) => <EntryListItem entry={item} onDelete={handleDelete} />}
         ItemSeparatorComponent={Separator}
         ListEmptyComponent={
           <EmptyState title={t('home.emptyTitle')} description={t('home.emptyDescription')} />

@@ -7,11 +7,12 @@ import { formatTimestamp } from '@/lib/i18n/format';
 import { THEME } from '@/lib/theme/tokens';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { isToday } from 'date-fns';
+import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { ArrowUpIcon, SettingsIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
-import { Modal, TextInput, View } from 'react-native';
+import { Modal, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export function EntryComposer({ onSubmit }: { onSubmit: (text: string, at: Date) => void }) {
@@ -55,21 +56,29 @@ export function EntryComposer({ onSubmit }: { onSubmit: (text: string, at: Date)
         </Text>
       ) : null}
 
-      <View className="flex-row items-end gap-2 rounded-full border border-border bg-card pl-2.5 pr-2 py-2 shadow-sm shadow-black/5">
-        <Button variant="ghost" size="icon" className="rounded-full" onPress={openPicker}>
-          <Icon as={SettingsIcon} size={18} className={backfilling ? 'text-primary' : undefined} />
-        </Button>
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          placeholder={t('home.composerPlaceholder')}
-          placeholderTextColor={theme.mutedForeground}
-          multiline
-          className="max-h-28 flex-1 px-1 py-2.5 text-sm text-foreground"
+      <View className="overflow-hidden rounded-[28px] border border-border shadow-sm shadow-black/5">
+        <BlurView
+          intensity={60}
+          tint={colorScheme === 'dark' ? 'dark' : 'light'}
+          blurMethod="dimezisBlurView"
+          style={StyleSheet.absoluteFill}
         />
-        <Button size="icon" className="rounded-full" onPress={handleSubmit} disabled={!canSubmit}>
-          <Icon as={ArrowUpIcon} />
-        </Button>
+        <View className="flex-row items-end gap-2 bg-card/40 pl-2.5 pr-2 py-2">
+          <Button variant="ghost" size="icon" className="rounded-full" onPress={openPicker}>
+            <Icon as={SettingsIcon} size={18} className={backfilling ? 'text-primary' : undefined} />
+          </Button>
+          <TextInput
+            value={text}
+            onChangeText={setText}
+            placeholder={t('home.composerPlaceholder')}
+            placeholderTextColor={theme.mutedForeground}
+            multiline
+            className="max-h-28 flex-1 px-1 py-2.5 text-sm text-foreground"
+          />
+          <Button size="icon" className="rounded-full" onPress={handleSubmit} disabled={!canSubmit}>
+            <Icon as={ArrowUpIcon} />
+          </Button>
+        </View>
       </View>
 
       <Modal

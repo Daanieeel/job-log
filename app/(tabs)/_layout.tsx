@@ -20,7 +20,11 @@ export default function TabsLayout() {
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="summary">
         <NativeTabs.Trigger.Icon sf="sparkles" />
-        <NativeTabs.Trigger.Label>{t('summary.title')}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t('nav.summary')}</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="search" role="search">
+        <NativeTabs.Trigger.Icon sf="magnifyingglass" />
+        <NativeTabs.Trigger.Label>{t('nav.search')}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="settings">
         <NativeTabs.Trigger.Icon sf={{ default: 'gearshape', selected: 'gearshape.fill' }} />

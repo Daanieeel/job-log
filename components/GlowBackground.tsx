@@ -5,7 +5,7 @@ import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, RadialGradient, Stop } fr
 
 /** A white background washes color out far more than a near-black one, so light mode needs more opacity, not less, for the same hue to read as bold. */
 function opacityFor(scheme: ColorScheme, base: number): number {
-  return scheme === 'light' ? base + 0.22 : base;
+  return scheme === 'light' ? base + 0.36 : base;
 }
 
 const HEIGHT = 360;
@@ -20,10 +20,10 @@ type Blob = { hue: GlowHue; cx: number; cy: number; r: number; opacity: number }
 // up from behind the tab bar. Radii keep margin from HEIGHT's top edge for the same reason they
 // used to keep margin from the bottom — so the blur's spread fully completes before it's clipped.
 const BLOBS: Blob[] = [
-  { hue: 'violet', cx: 200, cy: 340, r: 190, opacity: 0.5 },
-  { hue: 'cobalt', cx: 40, cy: 320, r: 130, opacity: 0.4 },
-  { hue: 'amber', cx: 350, cy: 300, r: 120, opacity: 0.36 },
-  { hue: 'cyan', cx: 150, cy: 230, r: 95, opacity: 0.34 },
+  { hue: 'violet', cx: 200, cy: 340, r: 190, opacity: 0.56 },
+  { hue: 'cobalt', cx: 40, cy: 320, r: 130, opacity: 0.45 },
+  { hue: 'amber', cx: 350, cy: 300, r: 120, opacity: 0.41 },
+  { hue: 'cyan', cx: 150, cy: 230, r: 95, opacity: 0.39 },
 ];
 
 /**

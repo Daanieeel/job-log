@@ -3,7 +3,7 @@ import { EntryListItem } from '@/components/EntryListItem';
 import { QuickEntryBar } from '@/components/QuickEntryBar';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from '@/lib/i18n';
-import { createEntry, listByDay, type Entry } from '@/lib/db/entries';
+import { createEntry, deleteEntry, listByDay, type Entry } from '@/lib/db/entries';
 import { periodBounds, periodLabel } from '@/lib/dates/periods';
 import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
@@ -37,6 +37,11 @@ export default function DayDetailScreen() {
     refresh();
   }
 
+  function handleDelete(id: string) {
+    deleteEntry(id);
+    refresh();
+  }
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -48,7 +53,7 @@ export default function DayDetailScreen() {
         keyboardShouldPersistTaps="handled"
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: 20, flexGrow: 1 }}
-        renderItem={({ item }) => <EntryListItem entry={item} />}
+        renderItem={({ item }) => <EntryListItem entry={item} onDelete={handleDelete} />}
         ItemSeparatorComponent={Separator}
         ListEmptyComponent={
           <EmptyState title={t('archive.dayEmptyTitle')} description={t('archive.dayEmptyDescription')} />

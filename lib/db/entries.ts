@@ -97,6 +97,20 @@ export function entryCountsByDay(): Map<string, number> {
   return new Map(rows.map((r) => [r.day_key, r.count]));
 }
 
+const SEARCH_LIMIT = 200;
+
+/** Entries whose text contains `query` (case-insensitive), newest first. */
+export function searchEntries(query: string): Entry[] {
+  const trimmed = query.trim();
+  if (!trimmed) return [];
+  const rows = getDb().getAllSync<EntryRow>(
+    'SELECT * FROM entries WHERE text LIKE ? COLLATE NOCASE ORDER BY created_at DESC LIMIT ?;',
+    `%${trimmed}%`,
+    SEARCH_LIMIT
+  );
+  return rows.map(fromRow);
+}
+
 /** Every entry in the range, grouped by day (newest-first within each day) — for Archive's extended view. */
 export function listInRangeGroupedByDay(startMs: number, endMsExclusive: number): Map<string, Entry[]> {
   const rows = getDb().getAllSync<EntryRow>(
@@ -113,6 +127,10 @@ export function listInRangeGroupedByDay(startMs: number, endMsExclusive: number)
     else grouped.set(entry.dayKey, [entry]);
   }
   return grouped;
+}
+
+export function deleteEntry(id: string): void {
+  getDb().runSync('DELETE FROM entries WHERE id = ?;', id);
 }
 
 export function clearAll(): void {

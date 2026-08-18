@@ -106,6 +106,43 @@ export function currentPeriodKey(type: PeriodType, now: Date = new Date()): stri
   return periodKeyFor(type, now);
 }
 
+/**
+ * Extra periods of buffer past the earliest logged entry, so the infinite summary list doesn't
+ * stop exactly on the first entry — the user gets a bit of empty run-up before the true start.
+ */
+export const HISTORY_PADDING: Record<PeriodType, number> = {
+  day: 7,
+  week: 4,
+  month: 3,
+  quarter: 2,
+  year: 1,
+};
+
+/** The last period key the infinite summary list should render, given the earliest entry's day key. */
+export function historyFloorKey(type: PeriodType, firstDayKey: string): string {
+  const [y, m, d] = firstDayKey.split('-').map(Number);
+  let key = periodKeyFor(type, new Date(y, m - 1, d));
+  for (let i = 0; i < HISTORY_PADDING[type]; i++) {
+    key = stepPeriod(type, key, -1);
+  }
+  return key;
+}
+
+/** Safety valve for periodKeysBetween — string ops are cheap, but this bounds a runaway loop. */
+const MAX_PERIOD_KEYS = 10000;
+
+/** Every period key from `fromKey` down to `toKeyInclusive`, newest first. */
+export function periodKeysBetween(type: PeriodType, fromKey: string, toKeyInclusive: string): string[] {
+  const keys: string[] = [];
+  let key = fromKey;
+  for (let i = 0; i < MAX_PERIOD_KEYS; i++) {
+    keys.push(key);
+    if (key === toKeyInclusive) break;
+    key = stepPeriod(type, key, -1);
+  }
+  return keys;
+}
+
 export function stepPeriod(type: PeriodType, key: string, direction: 1 | -1): string {
   const { start } = periodBounds(type, key);
   const stepped =

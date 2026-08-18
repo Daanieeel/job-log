@@ -24,17 +24,42 @@ const BASIC_SUMMARY_LANGUAGE: AppLanguage = 'en';
 /**
  * Resolves the summary for a period in a given content language, honoring the cache rule:
  * a cached row is reused when it's final (period fully in the past) or its entry_count still
- * matches the live count. Otherwise the on-device model (or the basic fallback) regenerates it.
+ * matches the live count. Otherwise the on-device model (or the basic fallback) regenerates it —
+ * unless `dryRun` is set, in which case `null` is returned instead of generating, so callers can
+ * decide whether it's worth paying for generation (e.g. an off-screen item in a long list).
  */
 export async function getSummaryForPeriod(
   type: ExtendedPeriodType,
   key: string,
   language: AppLanguage,
-  options: { force?: boolean } = {}
-): Promise<SummaryResult> {
+  options?: { force?: boolean }
+): Promise<SummaryResult>;
+export async function getSummaryForPeriod(
+  type: ExtendedPeriodType,
+  key: string,
+  language: AppLanguage,
+  options: { force?: boolean; dryRun: true }
+): Promise<SummaryResult | null>;
+export async function getSummaryForPeriod(
+  type: ExtendedPeriodType,
+  key: string,
+  language: AppLanguage,
+  options: { force?: boolean; dryRun?: boolean } = {}
+): Promise<SummaryResult | null> {
   const bounds = periodBounds(type, key);
   const liveCount = countByRange(bounds.start.getTime(), bounds.end.getTime());
   const final = isPeriodFinal(type, key);
+
+  if (liveCount === 0) {
+    return {
+      bullets: [],
+      source: 'basic',
+      language,
+      generatedAt: Date.now(),
+      isFinal: final,
+      entryCount: 0,
+    };
+  }
 
   const availability = await checkAvailability();
   const cacheLanguage = availability.isAvailable ? language : BASIC_SUMMARY_LANGUAGE;
@@ -51,16 +76,7 @@ export async function getSummaryForPeriod(
     };
   }
 
-  if (liveCount === 0) {
-    return {
-      bullets: [],
-      source: 'basic',
-      language: cacheLanguage,
-      generatedAt: Date.now(),
-      isFinal: final,
-      entryCount: 0,
-    };
-  }
+  if (options.dryRun) return null;
 
   const entries = listByRange(bounds.start.getTime(), bounds.end.getTime());
 

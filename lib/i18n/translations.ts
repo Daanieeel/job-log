@@ -2,6 +2,15 @@ export const translations = {
   en: {
     'app.title': 'JobLog',
     'nav.home': 'Home',
+    'nav.summary': 'Summary',
+    'nav.search': 'Search',
+
+    'search.title': 'Search',
+    'search.placeholder': 'Search entries…',
+    'search.emptyTitle': 'No matching entries',
+    'search.emptyDescription': 'Try a different search term.',
+    'search.promptTitle': 'Search your log',
+    'search.promptDescription': 'Type to find entries by their text.',
 
     'home.composerEyebrow': 'Log an entry',
     'home.composerPlaceholder': 'What did you just do?',
@@ -54,6 +63,9 @@ export const translations = {
     'summary.customRangeEnd': 'End',
     'summary.customRangeApply': 'Apply',
     'summary.customRangeClear': 'Use granularity instead',
+    'summary.generate': 'Generate summary',
+    'summary.notGenerated': 'Not generated yet',
+    'summary.rangeToday': 'Today',
 
     'settings.title': 'Settings',
     'settings.appearance': 'Appearance',
@@ -65,9 +77,14 @@ export const translations = {
     'settings.language.en': 'English',
     'settings.language.de': 'Deutsch',
     'settings.aiSectionTitle': 'On-device AI',
+    'settings.aiSubtitle': 'Runs locally, works offline',
+    'settings.aiStatusAvailable': 'Available',
+    'settings.aiStatusUnavailable': 'Unavailable',
     'settings.aiAvailable': 'On-device AI: Available',
     'settings.aiUnavailable': 'On-device AI: Unavailable on this device',
     'settings.aiChecking': 'Checking…',
+    'settings.aiDetailBody':
+      "JobLog uses Apple Intelligence, built into your device, to turn your logged entries into short summaries. Nothing you write is sent to a server — generation happens entirely on-device, so it keeps working without an internet connection.\n\nIf your device or iOS version doesn't support Apple Intelligence, JobLog falls back to a simple, non-AI summary instead.",
     'settings.dataSectionTitle': 'Data',
     'settings.exportText': 'Export as text',
     'settings.exportAll': 'Export all data',
@@ -87,6 +104,15 @@ export const translations = {
   de: {
     'app.title': 'JobLog',
     'nav.home': 'Start',
+    'nav.summary': 'Übersicht',
+    'nav.search': 'Suche',
+
+    'search.title': 'Suche',
+    'search.placeholder': 'Einträge durchsuchen…',
+    'search.emptyTitle': 'Keine passenden Einträge',
+    'search.emptyDescription': 'Versuche einen anderen Suchbegriff.',
+    'search.promptTitle': 'Durchsuche dein Log',
+    'search.promptDescription': 'Tippe, um Einträge nach Text zu finden.',
 
     'home.composerEyebrow': 'Eintrag protokollieren',
     'home.composerPlaceholder': 'Was hast du gerade erledigt?',
@@ -141,6 +167,9 @@ export const translations = {
     'summary.customRangeEnd': 'Ende',
     'summary.customRangeApply': 'Übernehmen',
     'summary.customRangeClear': 'Granularität stattdessen verwenden',
+    'summary.generate': 'Zusammenfassung erstellen',
+    'summary.notGenerated': 'Noch nicht erstellt',
+    'summary.rangeToday': 'Heute',
 
     'settings.title': 'Einstellungen',
     'settings.appearance': 'Erscheinungsbild',
@@ -152,9 +181,14 @@ export const translations = {
     'settings.language.en': 'English',
     'settings.language.de': 'Deutsch',
     'settings.aiSectionTitle': 'On-Device-KI',
+    'settings.aiSubtitle': 'Läuft lokal, funktioniert offline',
+    'settings.aiStatusAvailable': 'Verfügbar',
+    'settings.aiStatusUnavailable': 'Nicht verfügbar',
     'settings.aiAvailable': 'On-Device-KI: Verfügbar',
     'settings.aiUnavailable': 'On-Device-KI: Auf diesem Gerät nicht verfügbar',
     'settings.aiChecking': 'Wird geprüft…',
+    'settings.aiDetailBody':
+      'JobLog nutzt Apple Intelligence direkt auf deinem Gerät, um deine Einträge in kurze Zusammenfassungen zu verwandeln. Nichts, was du schreibst, wird an einen Server gesendet — die Erstellung läuft vollständig auf dem Gerät und funktioniert daher auch offline.\n\nWenn dein Gerät oder deine iOS-Version Apple Intelligence nicht unterstützt, verwendet JobLog stattdessen eine einfache Zusammenfassung ohne KI.',
     'settings.dataSectionTitle': 'Daten',
     'settings.exportText': 'Als Text exportieren',
     'settings.exportAll': 'Alle Daten exportieren',
