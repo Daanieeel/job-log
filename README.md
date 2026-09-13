@@ -56,9 +56,9 @@ Hier erzeugt die on-device AI aus den rohen Einträgen lesbare Zusammenfassungen
 - [ ] Color Theme: Dark / Light / System
 - [ ] Sprachauswahl
 - [ ] Info-Box, ob das on-device AI-Modell auf diesem Gerät verfügbar ist
-- [ ] <button>Export all app data</button> → exportiert alle Daten aus der App
-- [ ] <button>Import data</button> → importiert zuvor exportierte Daten (z. B. von einem anderen Gerät)
-- [ ] <button>Clear all app data</button> → löscht alle Daten (mit zusätzlichem Bestätigungsdialog als Sicherheitsnetz)
+- [ ] `Export all app data` → exportiert alle Daten aus der App
+- [ ] `Import data` → importiert zuvor exportierte Daten (z. B. von einem anderen Gerät)
+- [ ] `Clear all app data` → löscht alle Daten (mit zusätzlichem Bestätigungsdialog als Sicherheitsnetz)
 
 ## Möglicher Tech Stack
 
