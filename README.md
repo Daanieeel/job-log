@@ -1,78 +1,76 @@
 # JobLog
 
-> A private work journal for iOS that summarizes your day, week, or month using on device AI
+JobLog ist eine persönliche iOS-App zum Protokollieren der eigenen Arbeit. Die Idee: Man trägt in dem Moment, in dem man etwas bei der Arbeit erledigt, kurz ein, was man gerade getan hat. Diese Einträge werden gespeichert und können später mit Hilfe von KI zu Zusammenfassungen (täglich, wöchentlich, monatlich, ...) verdichtet werden.
 
-A personal, fully offline, single-user work-logging app for iOS. Log short notes about what you
-just did at work, browse them by day in an archive, and get AI-curated summaries (Day / Week /
-Month / Quarter / Year) powered by on-device Apple Intelligence — with a graceful non-AI fallback
-when it's unavailable.
+Die App ist für **einen einzelnen Nutzer** gedacht und läuft **komplett offline** – es gibt kein Backend und keinen Account.
 
-Everything lives in local SQLite. No backend, no accounts, no sync.
+## Grundprinzipien
 
-## ⚠️ Requires a custom dev client — will NOT run in Expo Go
+Diese Punkte gelten für die ganze App und sollten bei jeder Entscheidung im Hinterkopf bleiben:
 
-This app uses `@eitjuh/expo-apple-intelligence`, a native module, so **Expo Go cannot run it**.
-You need a dev-client build.
+- **Minimalistisch & modern**: einfaches, aufgeräumtes Design mit unkomplizierter Bedienung
+- **Offline-first**: keine Internetverbindung nötig, kein Backend, kein Account
+- **Mehrsprachig**: UI auf Deutsch und Englisch verfügbar
+- **On-device AI**: alle KI-Funktionen laufen lokal auf dem Gerät (keine Cloud-APIs, nutze die Apple On-Device Models)
+- **iOS only**: Android muss nicht unterstützt werden, wir benutzen trotzdem React Native
 
-```bash
-bun install
+## Screens
 
-# One-time native project generation + CocoaPods install
-npx expo prebuild --platform ios
-cd ios && pod install && cd ..
+Die App besteht aus vier Haupt-Tabs. Jeder Screen ist unten mit seinen Anforderungen aufgelistet.
 
-# Build and launch the dev client on a simulator or device
-npx expo run:ios
-```
+### 1. Home
 
-After the first `run:ios`, day-to-day development is just:
+Der Startbildschirm; hier verbringt man die meiste Zeit während der Arbeit.
 
-```bash
-bun dev   # starts Metro; reload the already-installed dev client to connect
-```
+- [ ] Bereits geloggte Aktivitäten anzeigen (und einfach bearbeiten können)
+- [ ] Schnell erreichbarer Input, um zügig einen neuen Eintrag zu loggen
+- [ ] Aktuelles Datum/Uhrzeit prominent sichtbar
 
-Re-run `npx expo run:ios` whenever a native dependency changes (new `expo install`, new config
-plugin, etc.) — Metro alone won't pick up native changes.
+### 2. Archiv
 
-Apple Intelligence itself requires iOS 26+ on an iPhone 15 Pro or later (or an M-series iPad) with
-Apple Intelligence enabled in Settings — see `docs/adrs/ADR-002-apple-intelligence-requirements.md`.
-On anything else (including the simulator), the app automatically falls back to a basic,
-non-AI summary — this is expected, not a bug.
+Übersicht über alle vergangenen Einträge, gruppiert nach Tagen.
 
-## Project structure
+- [ ] Zeigt alle Tage in der gewählten Zeitspanne
+- [ ] Klick auf einen Tag → Detailseite mit allen rohen Einträgen dieses Tages
+- [ ] Tage ohne Eintrag müssen sich optisch von Tagen mit Eintrag unterscheiden
+- [ ] Jeder Tag zeigt (dezent) den Wochentag an
+- [ ] Zeitspannen-Filter für die angezeigten Tage:
+  - [ ] Presets: „Diese Woche", „Letzte Woche", „Dieser Monat", „Letzter Monat", „Dieses Jahr", „Letztes Jahr"
+  - [ ] alternativ Freie Auswahl über einen Kalender
+- [ ] Einträge hinzufügen/bearbeiten/löschen möglich
 
-```
-app/                  Expo Router routes (tabs: Home, Archive, Summary, Settings)
-components/           Screen-level components + components/ui (react-native-reusables primitives)
-lib/
-  db/                 expo-sqlite client, migrations, entries + summaries repositories
-  ai/                 Apple Intelligence integration, basic fallback, cache-aware orchestrator
-  dates/              Period (day/week/month/quarter/year) boundary math + archive day list
-  i18n/               English/German translations, language resolution, locale-aware formatting
-  export/             JSON export (raw entries + cached summaries) for a selected period
-  theme/              Design tokens + ThemeProvider (system/light/dark)
-  stores/             Zustand stores (theme, app language, summary language, summary filter)
-docs/adrs/            Architecture decision records for assumptions made during the build
-DECISIONS.md          Other build-time decisions and deviations from the original spec
-```
+### 3. Zusammenfassungen
 
-## Localization
+Hier erzeugt die on-device AI aus den rohen Einträgen lesbare Zusammenfassungen.
 
-The UI is available in English and German (`Settings → App language`, default: system locale).
-AI-generated summaries have their own independent language toggle on the Summary tab (default:
-German), so you can log in German and read summaries in either language. Basic (non-AI) fallback
-summaries can't be translated on-device and are shown in their original language — see
-`docs/adrs/ADR-003-localization.md`.
+- [ ] Zeitspanne auswählbar (genau wie im Archiv)
+- [ ] Zeigt einen Zusammenfassungstext für die gewählte Zeitspanne (darf bzw. soll auch Stichpunkte enthalten, sollte aber wie normaler Fließtext lesbar sein)
+  - [ ] Falls noch nicht generiert: Loading-Zustand anzeigen
+- [ ] Button zum Neugenerieren der Zusammenfassung
+  - [ ] optionales Text-Feld für Feedback an die AI, was beim Neugenerieren beachtet werden soll
+- [ ] Button zum Kopieren des Texts
+- [ ] Einmal generierte Zusammenfassungen werden gespeichert, damit sie beim nächsten Öffnen sofort angezeigt werden (keine erneute Generierung nötig)
 
-## Exporting data
+### 4. Einstellungen
 
-- **Settings → Export as text** — every entry ever logged, as a plain-text share sheet.
-- **Summary tab → Export period as JSON** — the currently-selected period's raw entries plus any
-  already-generated summaries (in whichever languages have been generated), as a `.json` file via
-  the native share sheet. See `docs/adrs/ADR-004-json-export-scope.md` for exactly what's included.
+- [ ] Color Theme: Dark / Light / System
+- [ ] Sprachauswahl
+- [ ] Info-Box, ob das on-device AI-Modell auf diesem Gerät verfügbar ist
+- [ ] <button>Export all app data</button> → exportiert alle Daten aus der App
+- [ ] <button>Import data</button> → importiert zuvor exportierte Daten (z. B. von einem anderen Gerät)
+- [ ] <button>Clear all app data</button> → löscht alle Daten (mit zusätzlichem Bestätigungsdialog als Sicherheitsnetz)
 
-## Tech stack
+## Möglicher Tech Stack
 
-Expo SDK 56 (Router, dev-client), NativeWind + react-native-reusables, expo-sqlite, Zustand,
-date-fns, `@eitjuh/expo-apple-intelligence`, expo-symbols/blur/linear-gradient/haptics,
-`@expo-google-fonts/space-mono`.
+Kurze Einordnung, wofür jedes Paket gedacht ist:
+
+| Package | Zweck |
+|---|---|
+| [Expo](https://expo.dev/) | Framework/Tooling rund um React Native (Build, Dev-Server, native Module) |
+| [NativeWind](https://www.nativewind.dev/) | Tailwind-CSS-Syntax für React-Native-Styling |
+| [react-native-reusables](https://reactnativereusables.com/) | anpassbare UI Components (React-Native Pendant zu shadcn/ui) |
+| [expo-sqlite](https://docs.expo.dev/versions/latest/sdk/sqlite/) <br /> → [Gutes Tutorial mit Drizzle](https://expo.dev/blog/modern-sqlite-for-react-native-apps) | Lokale Datenbank auf dem Gerät |
+| [date-fns](https://date-fns.org/) | Hilfsfunktionen für Datums-/Zeitberechnungen |
+| [`@eitjuh/expo-apple-intelligence`](https://github.com/eitjuh/expo-apple-intelligence) | Zugriff auf Apples on-device AI-Modell |
+| [expo-haptics](https://docs.expo.dev/versions/latest/sdk/haptics/) | Haptisches Feedback (Vibration) |
+| [expo-font](https://docs.expo.dev/versions/latest/sdk/font/) + [`@expo-google-fonts/<font-name>`](https://github.com/expo/google-fonts) | Einbindung von Google Fonts |
